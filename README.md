@@ -6,6 +6,8 @@ Built with [Arc Studio](https://studio.arc.io) by [Design Master Solutions](http
 
 **Live app (Arc Testnet):** https://arc-delivery-escrow.pages.dev
 
+**Demo video (Escrow Guardian, 2:28):** https://youtu.be/_niDozyKopU ([docs/demo.mp4](docs/demo.mp4))
+
 ---
 
 ## Contract Deployments
