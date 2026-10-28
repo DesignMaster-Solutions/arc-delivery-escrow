@@ -1,0 +1,8 @@
+{
+  "schedule": "0 */10 * * * *",
+  "chainSelectorName": "arc-testnet",
+  "escrowAddress": "0xd6D42F482585e8c5882a90860FB4cd1b875d29B2",
+  "registryAddress": "0x65746f288670b6CA853e3D212C6d0252356ae0CC",
+  "gasLimit": "500000",
+  "maxJobs": 50
+}
