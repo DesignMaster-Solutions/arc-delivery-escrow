@@ -1,0 +1,577 @@
+{
+  "contractAddress": "0xd6d42f482585e8c5882a90860fb4cd1b875d29b2",
+  "network": "ARC-TESTNET",
+  "deployerWalletId": "3c2464b2-8369-52e2-a782-800bbeca5396",
+  "contract_code_path": "/home/user/app/contracts/DeliveryEscrowV2.sol",
+  "contract_compiled_code_path": "/home/user/app/contracts/out/DeliveryEscrowV2.sol/DeliveryEscrowV2.json",
+  "contract_network_and_links": {
+    "Arc Testnet": "https://explorer.testnet.arc.io/address/0xd6d42f482585e8c5882a90860fb4cd1b875d29b2"
+  },
+  "contract_deployments": [
+    {
+      "chain": "Arc Testnet",
+      "address": "0xd6d42f482585e8c5882a90860fb4cd1b875d29b2",
+      "explorerUrl": "https://explorer.testnet.arc.io/address/0xd6d42f482585e8c5882a90860fb4cd1b875d29b2",
+      "txHash": "0x4bdd00de317aadda781f5534a917907060bd8ff28d4a16511d41a6b14928b900",
+      "deployedAt": "2026-10-28T02:23:45.539Z"
+    }
+  ],
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [
+        {
+          "name": "usdc_",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "claimAfterReview",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "createJob",
+      "inputs": [
+        {
+          "name": "freelancer",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint128",
+          "internalType": "uint128"
+        },
+        {
+          "name": "deliverBy",
+          "type": "uint40",
+          "internalType": "uint40"
+        },
+        {
+          "name": "reviewWindow",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "payeeAddrs",
+          "type": "address[3]",
+          "internalType": "address[3]"
+        },
+        {
+          "name": "payeeBps",
+          "type": "uint16[3]",
+          "internalType": "uint16[3]"
+        },
+        {
+          "name": "payeeCount",
+          "type": "uint8",
+          "internalType": "uint8"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getJob",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct DeliveryEscrowV2.Job",
+          "components": [
+            {
+              "name": "client",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "freelancer",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint128",
+              "internalType": "uint128"
+            },
+            {
+              "name": "deliverBy",
+              "type": "uint40",
+              "internalType": "uint40"
+            },
+            {
+              "name": "reviewWindow",
+              "type": "uint32",
+              "internalType": "uint32"
+            },
+            {
+              "name": "payeeCount",
+              "type": "uint8",
+              "internalType": "uint8"
+            },
+            {
+              "name": "status",
+              "type": "uint8",
+              "internalType": "uint8"
+            },
+            {
+              "name": "deliveredAt",
+              "type": "uint40",
+              "internalType": "uint40"
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "deliveryUri",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "payeeAddrs",
+              "type": "address[3]",
+              "internalType": "address[3]"
+            },
+            {
+              "name": "payeeBps",
+              "type": "uint16[3]",
+              "internalType": "uint16[3]"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "jobCount",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "jobs",
+      "inputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "client",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "freelancer",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint128",
+          "internalType": "uint128"
+        },
+        {
+          "name": "deliverBy",
+          "type": "uint40",
+          "internalType": "uint40"
+        },
+        {
+          "name": "reviewWindow",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "payeeCount",
+          "type": "uint8",
+          "internalType": "uint8"
+        },
+        {
+          "name": "status",
+          "type": "uint8",
+          "internalType": "uint8"
+        },
+        {
+          "name": "deliveredAt",
+          "type": "uint40",
+          "internalType": "uint40"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "deliveryUri",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "markDelivered",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "deliveryUri",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "nextJobId",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "pendingWithdrawals",
+      "inputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint128",
+          "internalType": "uint128"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "refund",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "release",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "usdc",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "contract IERC20"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "withdraw",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "Claimed",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "claimedAt",
+          "type": "uint40",
+          "indexed": false,
+          "internalType": "uint40"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Delivered",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "deliveryUri",
+          "type": "string",
+          "indexed": false,
+          "internalType": "string"
+        },
+        {
+          "name": "deliveredAt",
+          "type": "uint40",
+          "indexed": false,
+          "internalType": "uint40"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "JobCreated",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "client",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "freelancer",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint128",
+          "indexed": false,
+          "internalType": "uint128"
+        },
+        {
+          "name": "deliverBy",
+          "type": "uint40",
+          "indexed": false,
+          "internalType": "uint40"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Refunded",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "refundedAt",
+          "type": "uint40",
+          "indexed": false,
+          "internalType": "uint40"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Released",
+      "inputs": [
+        {
+          "name": "jobId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "releasedAt",
+          "type": "uint40",
+          "indexed": false,
+          "internalType": "uint40"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Withdrawn",
+      "inputs": [
+        {
+          "name": "payee",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint128",
+          "indexed": false,
+          "internalType": "uint128"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "DeadlineNotPassed",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "DeadlinePassed",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidAmount",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidDeadline",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidPayeeBps",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidPayeeCount",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidReviewWindow",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NotClient",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NotFreelancer",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NothingToWithdraw",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ReentrancyGuardReentrantCall",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ReviewWindowOpen",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "SafeERC20FailedOperation",
+      "inputs": [
+        {
+          "name": "token",
+          "type": "address",
+          "internalType": "address"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "TransferFailed",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "WrongStatus",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ZeroAddress",
+      "inputs": []
+    }
+  ]
+}
