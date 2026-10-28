@@ -4,6 +4,8 @@ A USDC escrow for freelance and agency jobs, deployed on Arc. Clients lock USDC 
 
 Built with [Arc Studio](https://studio.arc.io) by [Design Master Solutions](https://www.designmastersolutions.com): contract, Foundry tests (45, including fuzz), security and functional audits and the React app were written in Arc Studio ([project](https://studio.arc.io/app/38668baa-8486-48a6-af50-e5441c9e42c4)).
 
+**Live app (Arc Testnet):** https://arc-delivery-escrow.pages.dev
+
 ---
 
 ## Contract Deployments
