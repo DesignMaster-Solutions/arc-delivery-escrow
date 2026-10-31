@@ -59,6 +59,8 @@ How it works:
 4. **EVM write**: the report goes through the Chainlink forwarder to [`BreachNoticeRegistry`](contracts/cre/BreachNoticeRegistry.sol) (a `ReceiverTemplate` consumer).
 5. The registry **re-checks every condition against the escrow state** before recording, so the workflow can only nominate jobs: a notice can never be written for a job that is not in breach, the wrong kind is rejected (`NoticeRejected`), and replays never overwrite the first notice (its timestamp is the legal record).
 
+6. **HTTP capability + secrets: service of notice.** A notice that nobody receives is not served, so after the write the workflow e-mails the service copy (jobs, remedy, entitled party, transaction link) to the escrow desk through the Resend API: `runtime.getSecret` fetches the API key (`cre secrets`, never in config or code), the request runs in node mode and the nodes agree on the HTTP status with `consensusIdenticalAggregation`; every node posts with the same `Idempotency-Key` (one per report), so Resend sends exactly one e-mail. A failed e-mail is logged and never fails the run: the on-chain record already stands.
+
 Code: [`cre-guardian/escrow-guardian/main.ts`](cre-guardian/escrow-guardian/main.ts) (workflow), [`contracts/cre/BreachNoticeRegistry.sol`](contracts/cre/BreachNoticeRegistry.sol) (consumer), [`contracts/test/BreachNoticeRegistry.t.sol`](contracts/test/BreachNoticeRegistry.t.sol) (8 Foundry tests), [`scripts/seed-breach-jobs.sh`](scripts/seed-breach-jobs.sh) (creates one breached, one silent-client and one healthy job).
 
 ### Live run on Arc Testnet (CRE simulation with `--broadcast`)
@@ -68,6 +70,7 @@ Code: [`cre-guardian/escrow-guardian/main.ts`](cre-guardian/escrow-guardian/main
 | BreachNoticeRegistry | [`0x65746f288670b6CA853e3D212C6d0252356ae0CC`](https://testnet.arcscan.app/address/0x65746f288670b6CA853e3D212C6d0252356ae0CC) (forwarder `0x6E9EE680ef59ef64Aa8C7371279c27E496b5eDc1`, escrow `0xd6D4...29B2`) |
 | Jobs seeded | #2 deadline will be missed, #3 delivered and client silent, #4 healthy ([txs](scripts/seed-breach-jobs.sh)) |
 | Notice transaction | [`0x4dc9cb1d...6649d51a`](https://testnet.arcscan.app/tx/0x4dc9cb1d7b967ceb91fa62ccf4cc23011b29d545f4f509006d0c6c5c6649d51a) |
+| Job #5 (31 Oct), notice + service by e-mail | [`0x6fb31ca4...2724a63`](https://testnet.arcscan.app/tx/0x6fb31ca4c7c85aace29911995985bf3126502e1df83c17e8897664eff2724a63), e-mail `delivered` (second live run below) |
 
 ```
 [USER LOG] Escrow 0xd6D42F482585e8c5882a90860FB4cd1b875d29B2: 5 jobs, checking 5
@@ -77,6 +80,17 @@ Code: [`cre-guardian/escrow-guardian/main.ts`](cre-guardian/escrow-guardian/main
 ```
 
 Second run, same state: `No new breach: every escrow is within its terms.` (idempotent). On-chain afterwards: `notices(2) = (1, 1793155896, client)`, `notices(3) = (2, 1793155896, freelancer)`, `notices(4) = (0, 0, 0x0)`, `noticeCount = 2`.
+
+**Second live run (31 Oct 2026, with service of notice).** Job #5 was seeded with a 75-second deadline and no delivery ([createJob](https://testnet.arcscan.app/tx/0x3280cea25458c653215a71ed292c8cd77fc814703733f8467f540195483588b6)). Once `noticeDue(5)` turned to `DELIVERY_DEADLINE_MISSED`, the simulation recorded the notice through the forwarder ([`0x6fb31ca4...2724a63`](https://testnet.arcscan.app/tx/0x6fb31ca4c7c85aace29911995985bf3126502e1df83c17e8897664eff2724a63), block 69962382) and served it by e-mail:
+
+```
+[USER LOG] Escrow 0xd6D42F482585e8c5882a90860FB4cd1b875d29B2: 6 jobs, checking 6
+[USER LOG] Job #5: DELIVERY_DEADLINE_MISSED (client may refund) -> entitled party 0x68808d92833aA293775f5Dde2dcFF458F76cE0ed
+[USER LOG] Recorded 1 notice(s) on-chain: 0x6fb31ca4c7c85aace29911995985bf3126502e1df83c17e8897664eff2724a63
+[USER LOG] Notice served by e-mail to info@designmastersolutions.com (HTTP 200)
+```
+
+Resend shows one e-mail, `Breach notice served: job #5`, status `delivered`. Run again 40 seconds later: `No new breach: every escrow is within its terms.` and no second e-mail. On-chain afterwards: `notices(5) = (1, 1793425819, client)`, `noticeCount = 3`.
 
 ---
 

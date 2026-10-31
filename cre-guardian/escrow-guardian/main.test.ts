@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { decodeAbiParameters, parseAbiParameters } from "viem";
-import { encodeNoticeReport, initWorkflow, selectBreaches, type Config } from "./main";
+import { encodeNoticeReport, initWorkflow, noticeEmail, selectBreaches, type Config } from "./main";
 
 const party = "0x00000000000000000000000000000000000000aa";
 
@@ -32,6 +32,28 @@ describe("encodeNoticeReport", () => {
     const [ids, kinds] = decodeAbiParameters(parseAbiParameters("uint256[], uint8[]"), hex);
     expect(ids).toEqual([2n, 3n]);
     expect(kinds).toEqual([1, 2]);
+  });
+});
+
+describe("noticeEmail", () => {
+  const tx = "0x4dc9cb1d7b967ceb91fa62ccf4cc23011b29d545f4f509006d0c6c5c6649d51a";
+  const breaches = [
+    { jobId: 2n, kind: 1, party },
+    { jobId: 3n, kind: 2, party: "0x00000000000000000000000000000000000000bb" },
+  ];
+
+  test("names every job, the remedy and the transaction, with one key per report", () => {
+    const mail = noticeEmail(breaches, tx, "https://testnet.arcscan.app/tx/");
+    expect(mail.subject).toBe("Breach notice served: jobs #2, #3");
+    expect(mail.text).toContain("Job #2: DELIVERY_DEADLINE_MISSED (client may refund) -> entitled party " + party);
+    expect(mail.text).toContain("Job #3: REVIEW_WINDOW_LAPSED (freelancer may claim payment) -> entitled party 0x00000000000000000000000000000000000000bb");
+    expect(mail.text).toContain("Transaction: https://testnet.arcscan.app/tx/" + tx);
+    expect(mail.idempotencyKey).toBe(`escrow-guardian-${tx}`);
+    expect(noticeEmail(breaches, tx).idempotencyKey).toBe(mail.idempotencyKey);
+  });
+
+  test("singular subject for one job", () => {
+    expect(noticeEmail([breaches[0]], tx).subject).toBe("Breach notice served: job #2");
   });
 });
 

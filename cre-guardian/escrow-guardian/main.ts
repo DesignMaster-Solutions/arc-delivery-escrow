@@ -1,12 +1,15 @@
 import {
   bytesToHex,
+  consensusIdenticalAggregation,
   CronCapability,
   EVMClient,
   encodeCallMsg,
   getNetwork,
   handler,
   hexToBase64,
+  HTTPClient,
   LATEST_BLOCK_NUMBER,
+  type NodeRuntime,
   Runner,
   TxStatus,
   type Runtime,
@@ -18,6 +21,7 @@ import {
   encodeFunctionData,
   parseAbi,
   parseAbiParameters,
+  stringToHex,
   zeroAddress,
 } from "viem";
 
@@ -28,7 +32,14 @@ export type Config = {
   registryAddress: string;
   gasLimit: string;
   maxJobs: number;
+  /** Optional service of notice by e-mail (Resend). Leave unset to only record on-chain. */
+  noticeInbox?: string;
+  noticeFrom?: string;
+  explorerTxUrl?: string;
 };
+
+/** Secret id (see ../secrets.yaml): a Resend API key, never in config or code. */
+export const RESEND_SECRET = "RESEND_API_KEY";
 
 export const KIND_LABEL: Record<number, string> = {
   1: "DELIVERY_DEADLINE_MISSED (client may refund)",
@@ -54,6 +65,53 @@ export const selectBreaches = (
 
 export const encodeNoticeReport = (breaches: Breach[]) =>
   encodeAbiParameters(reportParams, [breaches.map((b) => b.jobId), breaches.map((b) => b.kind)]);
+
+/** Service copy of the on-chain record. One idempotency key per report: every DON node posts, Resend sends once. */
+export const noticeEmail = (breaches: Breach[], txHash: string, explorerTxUrl = "") => ({
+  idempotencyKey: `escrow-guardian-${txHash}`,
+  subject: `Breach notice served: job${breaches.length > 1 ? "s" : ""} ${breaches.map((b) => `#${b.jobId}`).join(", ")}`,
+  text: [
+    "Escrow Guardian (Chainlink CRE) recorded the following breach notice(s) on-chain:",
+    "",
+    ...breaches.map((b) => `Job #${b.jobId}: ${KIND_LABEL[b.kind]} -> entitled party ${b.party}`),
+    "",
+    `Transaction: ${explorerTxUrl}${txHash}`,
+    "This e-mail is the service copy. The on-chain record is the evidence.",
+  ].join("\n"),
+});
+
+const http = new HTTPClient();
+
+/** Serves the notice by e-mail through the HTTP capability; skipped when the inbox is not configured. */
+export const serveNotice = (runtime: Runtime<Config>, breaches: Breach[], txHash: string): string => {
+  const cfg = runtime.config;
+  if (!cfg.noticeInbox || !cfg.noticeFrom) return "Service by e-mail skipped: noticeInbox/noticeFrom not configured";
+  const apiKey = runtime.getSecret({ id: RESEND_SECRET }).result().value;
+  const mail = noticeEmail(breaches, txHash, cfg.explorerTxUrl);
+  const body = JSON.stringify({ from: cfg.noticeFrom, to: [cfg.noticeInbox], subject: mail.subject, text: mail.text });
+  const status = runtime
+    .runInNodeMode(
+      (node: NodeRuntime<Config>) =>
+        http
+          .sendRequest(node, {
+            url: "https://api.resend.com/emails",
+            method: "POST",
+            multiHeaders: {
+              Authorization: { values: [`Bearer ${apiKey}`] },
+              "Content-Type": { values: ["application/json"] },
+              "Idempotency-Key": { values: [mail.idempotencyKey] },
+            },
+            body: hexToBase64(stringToHex(body)),
+          })
+          .result().statusCode,
+      consensusIdenticalAggregation<number>(),
+    )()
+    .result();
+  // The on-chain record already stands: a failed e-mail is logged, never a failed run.
+  return status >= 200 && status < 300
+    ? `Notice served by e-mail to ${cfg.noticeInbox} (HTTP ${status})`
+    : `Service by e-mail failed (HTTP ${status}); the on-chain record stands`;
+};
 
 export const onCronTrigger = (runtime: Runtime<Config>): string => {
   const cfg = runtime.config;
@@ -118,6 +176,7 @@ export const onCronTrigger = (runtime: Runtime<Config>): string => {
   }
   const txHash = bytesToHex(write.txHash || new Uint8Array(32));
   runtime.log(`Recorded ${breaches.length} notice(s) on-chain: ${txHash}`);
+  runtime.log(serveNotice(runtime, breaches, txHash));
   return txHash;
 };
 
